@@ -12,20 +12,17 @@ namespace BookDownloader
             Path = hPath;
         }
 
-        public string GetHref(string html)
+        public string GetElement(string html)
         {
             HPath downloadTxt = new HPath("id='content'/table[1]/tbody/tr[4]/td/a[2]");
             Path = Path.Replace('\'', '"');
             string[] parser = Path.Split('/');
 
             int index = html.IndexOf(parser[0]);
-
-
-
             return string.Empty;
         }
 
-        public List<string> GetHrefList(string html)
+        public List<string> GetList(string html)
         {
             HPath downloadTxt = new HPath("class='gSearch__results'/li[1]");
             Path = Path.Replace('\'', '"');

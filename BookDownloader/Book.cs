@@ -10,7 +10,7 @@ namespace BookDownloader
     {
         public string Name { get; set; }
         public string Author { get; set; }
-        public string Url { get; set; }
+        public string BaseUrl { get; set; }
         public string Txt { get; set; }
         public string Zip { get; set; }
         public string Jar { get; set; }

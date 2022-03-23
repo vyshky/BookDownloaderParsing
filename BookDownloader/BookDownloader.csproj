@@ -55,11 +55,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="BookParser.cs" />
     <Compile Include="BookParserTululuDotOrg.cs" />
     <Compile Include="Utils\Element.cs" />
-    <Compile Include="Utils\HPath.cs" />
-    <Compile Include="SiteToString.cs" />
+    <Compile Include="Utils\SiteToString.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

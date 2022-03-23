@@ -10,78 +10,93 @@ namespace BookDownloader
     {
         string baseUrl = "https://tululu.org";
         List<Book> books;
+        SiteToString siteToString;
         string htmlCode;
-        string txt = "скачать txt";
-        string zip = "скачать zip";
-        string jar = "скачать jar";
-        string name = "Название книги";
-        string author = "Иванов Ваня";
-        string href = "google.ru";
+        string url = "target=\"_blank\" href=\"";
+        string name = ">";
+        string author = "class=\"t\">";
 
-        HPath searchBookList = new HPath("class='gSearch__results'/li[1]");
-        HPath downloadTxt = new HPath("id='content'/table[1]/tbody/tr[4]/td/a[2]");
-        HPath downloadZip = new HPath("id='content'/table[1]/tbody/tr[4]/td/a[3]");
-        HPath downloadJar = new HPath("id='content'/table[1]/tbody/tr[4]/td/a[4]");
+        string txt = "href=\"/txt";
+        string zip = "href=\"/zip";
+        string jar = "href=\"/jar";
 
-        public BookParserTululuDotOrg()
+        Encoding cyrillic = Encoding.GetEncoding(1251);
+        public BookParserTululuDotOrg(string book)
         {
             htmlCode = String.Empty;
             books = new List<Book>();
-        }
-
-        public void Search(string book)
-        {
-            SiteToString siteToString = new SiteToString();
+            siteToString = new SiteToString();
             htmlCode = siteToString.GetHtmlPage($"{baseUrl}/search/?q={book}");
         }
 
         public List<Book> GetBooks()
         {
-            List<string> list = searchBookList.GetList(htmlCode);
+            Book book = new Book();
 
 
-            // TODO :: реализовать цикл для перебора всего листа с книгами
-            /////////////////////////////////////////////// 
-            href = GetValue(list[0], "href=\"", "\"");
-            name = GetValue(list[0], $"{href}\">", "</a>");
-            author = GetValue(list[0], "class=\"t\">", "<");
-            books.Add(new Book
+            int index = 0;
+
+            for (int i = 0; i < htmlCode.Length / 2; ++i)
             {
-                Name = name,
-                Author = author,
-                Url = baseUrl + href,
-                Txt = txt,
-                Zip = zip,
-                Jar = jar
-            });
-            ///////////////////////////////////////////////  
+                book = new Book();
+                index = htmlCode.IndexOf(url);
+                if (index < 0)
+                { break; }
+                htmlCode = htmlCode.Remove(0, index + url.Length);
+                book.BaseUrl = baseUrl + htmlCode.Remove(htmlCode.IndexOf("\""));
+                htmlCode = htmlCode.Remove(0, htmlCode.IndexOf("\""));
+
+                index = htmlCode.IndexOf(name);
+                if (index < 0)
+                { break; }
+                htmlCode = htmlCode.Remove(0, index + name.Length);
+                book.Name = htmlCode.Remove(htmlCode.IndexOf("<"));
+                htmlCode = htmlCode.Remove(0, htmlCode.IndexOf("<"));
 
 
-            // Реализовать получение ссылко на скачивание
-            //txt = downloadTxt.GetHref(htmlCode);
-            //zip = downloadZip.GetHref(htmlCode);
-            //jar = downloadJar.GetHref(htmlCode);
+                index = htmlCode.IndexOf(author);
+                if (index < 0)
+                { break; }
+                htmlCode = htmlCode.Remove(0, index + author.Length);
+                book.Author = htmlCode.Remove(htmlCode.IndexOf("<"));
+                htmlCode = htmlCode.Remove(0, htmlCode.IndexOf("<"));
 
+                books.Add(book);
+            }
+
+            // TODO :: получить ссылки на скачивание site.GetHtmlPage(books.BaseUrl)
+
+
+            for (int i = 0; i < books.Count; ++i)
+            {
+                htmlCode = siteToString.GetHtmlPage(books[i].BaseUrl, cyrillic);
+                index = htmlCode.IndexOf(txt);
+                if (index < 0)
+                { continue; }
+                htmlCode = htmlCode.Remove(0, index + txt.Length);
+                books[i].Txt = baseUrl + "/txt" + htmlCode.Remove(htmlCode.IndexOf("\""));
+                htmlCode = htmlCode.Remove(0, htmlCode.IndexOf("\""));
+
+
+
+                index = htmlCode.IndexOf(zip);
+                if (index < 0)
+                { continue; }
+                htmlCode = htmlCode.Remove(0, index + zip.Length);
+                books[i].Zip = baseUrl + "/zip" + htmlCode.Remove(htmlCode.IndexOf("\""));
+                htmlCode = htmlCode.Remove(0, htmlCode.IndexOf("\""));
+
+
+                index = htmlCode.IndexOf(jar);
+                if (index < 0)
+                { continue; }
+                htmlCode = htmlCode.Remove(0, index + jar.Length);
+                books[i].Jar = baseUrl + "/jar" + htmlCode.Remove(htmlCode.IndexOf("\""));
+                htmlCode = htmlCode.Remove(0, htmlCode.IndexOf("\""));
+            }
 
             return books;
         }
 
-        private string GetValue(string text, string startBlock, string endBlock)
-        {
-            int startIndex = text.IndexOf(startBlock);
-
-            if (startIndex < 0)
-                return string.Empty;
-
-            int endIndex = text.IndexOf(endBlock, startIndex + startBlock.Length);
-
-            if (endIndex < 0)
-                return string.Empty;
-
-            text = text.Remove(endIndex);
-            text = text.Remove(0, startIndex + startBlock.Length);
-
-            return text;
-        }
     }
 }

@@ -20,8 +20,8 @@
         <ListBox x:Name="LB" Grid.Row="1"/>
 
         <WrapPanel Grid.Row="2" HorizontalAlignment="Center">
-            <Button x:Name="ButtonPathSave" Margin="5">Пусть сохранения</Button>
-            <Button x:Name="ButtonSave" Margin="5">Сохранить</Button>
+            <Button Click="ButtonSelectPath" Margin="5">Выбрать Путь</Button>
+            <Button Click="ButtonSave" Margin="5">Сохранить</Button>
         </WrapPanel>
 
     </Grid>

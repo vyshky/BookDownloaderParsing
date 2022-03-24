@@ -63,8 +63,7 @@ namespace BookDownloader
 
                 books.Add(book);
             }
-
-            // TODO :: получить ссылки на скачивание site.GetHtmlPage(books.BaseUrl)
+                   
 
 
             for (int i = 0; i < books.Count; ++i)
